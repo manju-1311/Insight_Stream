@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { IoSearch } from "react-icons/io5";
 import '../styles/Navbar.css'
 import { useNavigate } from 'react-router-dom';

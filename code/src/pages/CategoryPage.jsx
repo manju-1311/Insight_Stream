@@ -15,11 +15,14 @@ const CategoryPage = () => {
       if (id){
         fetchNews(id) 
       }
-      }, [window.location.pathname])
+      }, [id])
     
       const fetchNews = async (id) => {
         try {
-          const response = await axios.get(`https://newsapi.org/v2/everything?q=${id}&apiKey=37306aca596542f0a8402978de3d4224`);
+          const response = await axios.get('https://newsapi.org/v2/everything', {
+            timeout: 7000,
+            params: { q: id, pageSize: 42, sortBy: 'publishedAt', language: 'en', apiKey: '37306aca596542f0a8402978de3d4224' },
+          });
           setCategoryNews(response.data.articles);
         } catch (error) {
           console.error(error);
