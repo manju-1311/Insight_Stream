@@ -1,5 +1,7 @@
 .Home{
-    padding: 15vh 0 0 0;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 11rem 2.5rem 4rem;
 
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;

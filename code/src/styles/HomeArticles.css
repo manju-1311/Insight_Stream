@@ -7,10 +7,15 @@
 }
 
 .home-articles-body{
-    padding-bottom: 4vh;
-    border-bottom: 3px solid #000;
-
+    padding-bottom: 2.25rem;
+    border-bottom: 1px solid #252b38;
 }
+.home-articles-head h2{ color: #f5f7fb; font-size: 1.35rem; }
+.home-articles-head p{ color: #9aa4b5; }
+.home-article{ padding: .65rem; border-radius: .8rem; background: #131720; }
+.home-article:hover{ transform: translateY(-4px); transition: .2s ease; background: #1b2230; }
+.home-article p{ color: #e1e5ec; margin-bottom: .35rem; }
+
 .home-articles-head{
 
     display: flex;

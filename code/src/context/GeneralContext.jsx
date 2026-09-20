@@ -1,6 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
+const API_KEY = '37306aca596542f0a8402978de3d4224';
+const API_URL = 'https://newsapi.org/v2/everything';
+const requestConfig = { timeout: 7000 };
+
+let newsCache = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 5 * 60 * 1000;
+
+
 
 export const GeneralContext = React.createContext();
 
@@ -12,46 +21,45 @@ const GeneralContextProvider = ({children}) => {
     const [technologyNews, setTechnologyNews] = useState([]);
     const [politicsNews, setPoliticsNews] = useState([]);
 
-    useEffect(() => { 
-        fetchTopNews() 
-        fetchBusinessNews()
-        fetchPoliticsNews()
-        fetchTechnologyNews()
-      }, [])
-    
-      const fetchTopNews = async () => {
-        try {
-          const response = await axios.get("https://newsapi.org/v2/everything?q=popular&apiKey=37306aca596542f0a8402978de3d4224");
-          setTopNews(response.data.articles);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+    useEffect(() => {
+      let active = true;
 
-      const fetchBusinessNews = async () => {
-        try {
-          const response = await axios.get("https://newsapi.org/v2/everything?q=business&apiKey=37306aca596542f0a8402978de3d4224");
-          setBusinessNews(response.data.articles);
-        } catch (error) {
-          console.error(error);
+      const loadNews = async () => {
+        if (newsCache && Date.now() - cacheTimestamp < CACHE_TTL) {
+          setTopNews(newsCache.topNews);
+          setBusinessNews(newsCache.businessNews);
+          setPoliticsNews(newsCache.politicsNews);
+          setTechnologyNews(newsCache.technologyNews);
+          return;
         }
-      }
-      const fetchPoliticsNews = async () => {
+
+        const queries = ['popular', 'business', 'politics', 'technology'];
         try {
-          const response = await axios.get("https://newsapi.org/v2/everything?q=politics&apiKey=37306aca596542f0a8402978de3d4224");
-          setPoliticsNews(response.data.articles);
+          const responses = await Promise.allSettled(
+            queries.map((query) => axios.get(API_URL, {
+              ...requestConfig,
+              params: { q: query, pageSize: 20, sortBy: 'publishedAt', language: 'en', apiKey: API_KEY },
+            }))
+          );
+          if (!active) return;
+          const articles = responses.map((result) => result.status === 'fulfilled' ? result.value.data.articles || [] : []);
+          const [top, business, politics, technology] = articles;
+          const nextNews = { topNews: top, businessNews: business, politicsNews: politics, technologyNews: technology };
+          newsCache = nextNews;
+          cacheTimestamp = Date.now();
+          setTopNews(top);
+          setBusinessNews(business);
+          setPoliticsNews(politics);
+          setTechnologyNews(technology);
         } catch (error) {
-          console.error(error);
+          if (active) console.error('[v0] News fetch failed:', error.message);
         }
-      }
-      const fetchTechnologyNews = async () => {
-        try {
-          const response = await axios.get("https://newsapi.org/v2/everything?q=technology&apiKey=37306aca596542f0a8402978de3d4224");
-          setTechnologyNews(response.data.articles);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+      };
+
+      loadNews();
+      return () => { active = false; };
+    }, []);
+
 
     
   return (

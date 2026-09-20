@@ -1,7 +1,13 @@
 .top-stories-container{
-    margin-left: 2vw;
-    padding: 4vh 0;
+    margin: 0;
+    padding: 2.5rem 0;
 }
+.top-stories-container h3{ color: #f5f7fb; font-size: 1.1rem; letter-spacing: .03em; }
+.top-story{ padding: .65rem; border-radius: .75rem; background: #131720; }
+.top-story:hover{ background: #1b2230; transform: translateX(4px); transition: .2s ease; }
+.top-story p{ color: #d6dbe5; margin: 0; }
+.top-stories button{ background: #7c5cff; border: 0; color: #fff; border-radius: .6rem; padding: .7rem 1rem; font-weight: 600; }
+
 
 .top-stories-container h3{
 
